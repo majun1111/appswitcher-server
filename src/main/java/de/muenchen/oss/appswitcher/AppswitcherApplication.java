@@ -43,7 +43,7 @@ public class AppswitcherApplication {
     // Um Session Cookie auch als 3Party-Cookie in iframes zur Verfügung zu haben:
     // https://stackoverflow.com/a/60860531
     @Bean
-    public TomcatContextCustomizer sameSiteCookiesConfig() {
+    TomcatContextCustomizer sameSiteCookiesConfig() {
         return context -> {
             final Rfc6265CookieProcessor cookieProcessor = new Rfc6265CookieProcessor();
             cookieProcessor.setSameSiteCookies("NONE");
@@ -57,7 +57,7 @@ public class AppswitcherApplication {
             // Proxy to inject it into our singleton-scoped @Controller
             proxyMode = ScopedProxyMode.TARGET_CLASS
     )
-    public SessionBean todos() {
+    SessionBean todos() {
         return new SessionBean();
     }
 

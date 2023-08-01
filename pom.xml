@@ -118,6 +118,11 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- native image building -->
+			<plugin>
+				<groupId>org.graalvm.buildtools</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -178,6 +183,7 @@
 						<goals>
 							<goal>check</goal>
 						</goals>
+						<phase>test</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -201,7 +207,8 @@
 							application tests code -->
 						</includes>
 						<eclipse>
-							<file>itm-java-codeformat/java_codestyle_formatter.xml</file>
+							<file>
+								itm-java-codeformat/java_codestyle_formatter.xml</file>
 						</eclipse>
 						<trimTrailingWhitespace />
 						<endWithNewline />
@@ -212,6 +219,7 @@
 						<goals>
 							<goal>check</goal>
 						</goals>
+						<phase>test</phase>
 					</execution>
 				</executions>
 			</plugin>
