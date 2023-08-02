@@ -42,7 +42,7 @@
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<image.name>itatm/${project.artifactId}:${project.version}</image.name>
+		<image.name>itatm/${project.artifactId}</image.name>
 	</properties>
 
 	<dependencies>
@@ -231,10 +231,30 @@
 
 	<profiles>
 		<profile>
-			<id>build-image</id>
+			<id>lhm</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<builder>dockerhub.muenchen.de/paketobuildpacks/builder:base</builder>
+								<runImage>dockerhub.muenchen.de/paketobuildpacks/run:base-cnb</runImage>
+							</image>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>ci</id>
 			<properties>
 				<image.name>${env.IMAGE_NAME}</image.name>
 			</properties>
+		</profile>
+		<profile>
+			<id>build-image</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -248,6 +268,7 @@
 									<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
 									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
 								</env>
+								<verboseLogging>true</verboseLogging>
 								<tags>${env.IMAGE_TAGS}</tags>
 							</image>
 						</configuration>
