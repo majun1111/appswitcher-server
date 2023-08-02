@@ -140,7 +140,7 @@ jobs:
             type=ref,event=branch
       - name: Build with Maven
         env:
-          IMAGE_NAME: ghcr.io/${{ github.repository }}-native
+          IMAGE_NAME: ghcr.io/${{ github.repository }}-native-keycloak
           IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
           REGISTRY_USER: ${{ github.repository_owner }}
           REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
