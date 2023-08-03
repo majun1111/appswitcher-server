@@ -238,10 +238,13 @@
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
-							<image>
-								<builder>dockerhub.muenchen.de/paketobuildpacks/builder:base</builder>
-								<runImage>dockerhub.muenchen.de/paketobuildpacks/run:base-cnb</runImage>
-							</image>
+							<docker>
+								<builderRegistry>
+									<username>${env.DOCKERHUB_USERNAME}</username>
+									<password>${env.DOCKERHUB_PASSWORD}</password>
+									<url>https://index.docker.io/v1/</url>
+								</builderRegistry>
+							</docker>
 						</configuration>
 					</plugin>
 				</plugins>
