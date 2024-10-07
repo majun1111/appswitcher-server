@@ -23,19 +23,17 @@
     THE SOFTWARE.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.2</version>
+		<version>3.3.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>de.muenchen.oss.appswitcher</groupId>
 	<artifactId>appswitcher-server</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.1.2-SNAPSHOT</version>
 	<name>appswitcher-server</name>
 	<description>Server component for a Google-like app switching experience</description>
 	<properties>
@@ -79,7 +77,7 @@
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
-			<version>7.4</version>
+			<version>8.0</version>
 		</dependency>
 
 
@@ -152,7 +150,7 @@
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>4.2</version>
+				<version>4.6</version>
 				<configuration>
 					<properties>
 						<owner>Landeshauptstadt München | it@M</owner>
@@ -193,12 +191,12 @@
 			<plugin>
 				<groupId>com.diffplug.spotless</groupId>
 				<artifactId>spotless-maven-plugin</artifactId>
-				<version>2.38.0</version>
+				<version>2.43.0</version>
 				<dependencies>
 					<dependency>
 						<groupId>de.muenchen.oss</groupId>
 						<artifactId>itm-java-codeformat</artifactId>
-						<version>1.0.9</version>
+						<version>1.0.10</version>
 					</dependency>
 				</dependencies>
 				<configuration>
@@ -227,6 +225,34 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.diffplug.spotless</groupId>
+										<artifactId>spotless-maven-plugin</artifactId>
+										<versionRange>[2.43.0,)</versionRange>
+										<goals>
+											<goal>check</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<profiles>
@@ -273,6 +299,8 @@
 								</env>
 								<verboseLogging>true</verboseLogging>
 								<tags>${env.IMAGE_TAGS}</tags>
+								<builder>
+									paketobuildpacks/builder-jammy-base:latest</builder>
 							</image>
 						</configuration>
 						<executions>

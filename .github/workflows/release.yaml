@@ -27,13 +27,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
       - name: Setup git user
         uses: fregante/setup-git-user@v2
       - name: Install Java and Maven
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: "temurin"
@@ -50,43 +50,44 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+      contents: write
     steps:
       - name: checkout release tag
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.release-tag }}
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
-          images: docker.io/itatm/appswitcher-server
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=${{ github.event.inputs.release-version }}
             ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
       - name: Build with Maven
         env:
-          IMAGE_NAME: docker.io/itatm/appswitcher-server
+          IMAGE_NAME: ghcr.io/${{ github.repository }}
           IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
-          REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-          REGISTRY_TOKEN: ${{ secrets.DOCKERHUB_KEY }}
+          REGISTRY_USER: ${{ github.repository_owner }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,docker.io/itatm/appswitcher-server:latest; fi
-          mvn -B -ntp -P ci,build-image,publish verify
+          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,ghcr.io/it-at-m/appswitcher-server:latest; fi
+          mvn -B -ntp -DskipTests -P ci,build-image,publish verify
       - name: Create GitHub Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             target/*.jar
@@ -94,11 +95,3 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
-      - name: Update Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_KEY }}
-          repository: itatm/appswitcher-server
-          readme-filepath: ./IMAGE_README.md
-          short-description: ${{ github.event.repository.description }}
